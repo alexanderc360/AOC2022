@@ -4,8 +4,8 @@ file = open("inputs/input-2022-4.txt")
 
 pairs = []
 for line in file:
-    buff = re.split(',|-', line.strip())
-    pairs.append([buff[0], buff[1], buff[2], buff[3]])
+    pairs.append(re.split(',|-', line.strip()))
+
 
 count = 0
 for i in pairs:
