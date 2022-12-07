@@ -30,15 +30,13 @@ for line in file:
 i = 0
 cwd = Dir(None, None)
 # print(type(cwd) == Dir)
+
 while i < len(cmd):
-    # print(cwd.name)
     if cmd[i] == '':
         break
     line = cmd[i]
     if line[0] == '$':
-        # print(line)
         if line[2:4] == 'ls':
-            # print('ls')
             for j in cmd[i+1:]:
                 if j[0] == '$':
                     break
@@ -46,21 +44,14 @@ while i < len(cmd):
                     s = j.find(' ')
                     if j[:s] == 'dir':
                         cwd.content.append(Dir(cwd, j[s+1:]))
-                        # print(j)
                     else:
                         cwd.content.append(File(int(j[:s]), j[s+1:]))
-                        # print(j)
         elif line[2:4] == 'cd':
-            # print('cd ', line[5:])
             if line[5:] == '/':
                 cwd = Dir(None, '/')
-                # print(cwd.name)
             elif line[5:] == '..':
-                # print('f')
                 cwd = cwd.parent
-                # print(cwd.name)
             else:
-                # print()
                 for k in cwd.content:
                     if type(k) == Dir:
                         if k.name == line[5:]:
@@ -70,18 +61,18 @@ while i < len(cmd):
     i += 1
 
 
-def sizeFinder(dir, size):
-    # print(dir.name)
+def sizeFinder(dir):
+    print('dir', dir.name)
+    count = 0
     for i in dir.content:
         # print(type(i))
-        print(dir.name, size)
-
-        if type(i) == Dir:
-            print('dir')
-            size += sizeFinder(i, size)
-        elif type(i) == File:
-            print('file', i.size)
-            size += i.size
+        print('size:', size)
+        if type(i) == File:
+            print('file: ', i.name, i.size)
+            count += i.size
+        elif type(i) == Dir:
+            # print('dir')
+            size = sizeFinder(i, count)
     return size
 
 
@@ -89,7 +80,14 @@ def sizeFinder(dir, size):
 cwd = cwd.parent
 
 
-print(cwd.name)
+# cwd = cwd.content[0]
+
+# print('DIR:', cwd.name)
+
+# # for i in cwd.content:
+#     print(i.name)
 
 s = sizeFinder(cwd, 0)
 print(s)
+# for i in s:
+    # print(i)
