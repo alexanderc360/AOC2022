@@ -2,11 +2,7 @@ import os
 
 os.system("aocd > inputs/input-2022-7.txt")
 
-# file = open("inputs/input-2022-7.txt")
-file = open('test.txt')
-
-# for line in file:
-#     print(line)
+file = open("inputs/input-2022-7.txt")
 
 
 class Dir:
@@ -29,7 +25,6 @@ for line in file:
 
 i = 0
 cwd = Dir(None, None)
-# print(type(cwd) == Dir)
 
 while i < len(cmd):
     if cmd[i] == '':
@@ -56,38 +51,31 @@ while i < len(cmd):
                     if type(k) == Dir:
                         if k.name == line[5:]:
                             cwd = k
-
-    # print(i)
     i += 1
 
 
 def sizeFinder(dir):
-    print('dir', dir.name)
-    count = 0
+    size = 0
     for i in dir.content:
-        # print(type(i))
-        print('size:', size)
         if type(i) == File:
-            print('file: ', i.name, i.size)
-            count += i.size
+            size += i.size
         elif type(i) == Dir:
-            # print('dir')
-            size = sizeFinder(i, count)
+            size += sizeFinder(i)
     return size
 
 
-# while cwd.name != '/':
-cwd = cwd.parent
+def submit(dir):
+    total = 0
+    for i in dir.content:
+        if type(i) == Dir:
+            s = sizeFinder(i)
+            if s <= 100000:
+                total += s
+            total += submit(i)
+    return total
 
 
-# cwd = cwd.content[0]
+while cwd.name != '/':
+    cwd = cwd.parent
 
-# print('DIR:', cwd.name)
-
-# # for i in cwd.content:
-#     print(i.name)
-
-s = sizeFinder(cwd, 0)
-print(s)
-# for i in s:
-    # print(i)
+print(submit(cwd))
