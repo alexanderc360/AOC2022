@@ -13,7 +13,7 @@ class Monkey:
 file = open('inputs/input-2022-11.txt')
 
 
-def round(barrel):
+def round(barrel, mod):
     for m in barrel:
         o = m.operation
 
@@ -25,16 +25,14 @@ def round(barrel):
             else:
                 num = int(o[2])
 
+            i %= mod
             if o[1] == '+':
                 i += num
             elif o[1] == '*':
                 i *= num
 
-            # monkey gets bored
-            i = int(i/3)
-
-            throw = m.throw
             # decides and throws to a new monkey
+            throw = m.throw
             if i % m.test == 0:
                 barrel[throw[0]].items.append(i)
             else:
@@ -53,6 +51,8 @@ for line in file:
         munk.append(line.strip())
 buff.append(munk)
 
+
+mul = 1
 barrel = []  # barrel of monkeys haha
 for m in buff:
     c1 = m[1].find(':')
@@ -64,6 +64,7 @@ for m in buff:
 
     c3 = m[3].find('by')
     t = int(m[3][c3+2:])
+    mul *= t
 
     c4 = m[4].find('y')
     c5 = m[5].find('y')
@@ -73,8 +74,8 @@ for m in buff:
     barrel.append(ape)
 
 
-for i in range(20):
-    barrel = round(barrel)
+for i in range(10000):
+    barrel = round(barrel, mul)
 
 h = []
 for i in barrel:
