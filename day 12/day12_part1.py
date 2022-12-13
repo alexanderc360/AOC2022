@@ -1,17 +1,13 @@
 import os
 
-os.system("aocd > inputs/input-2022-12.txt")
+# os.system("aocd > inputs/input-2022-12.txt")
 
 file = open("inputs/input-2022-12.txt")
-# file = open('test.txt')
 
 
 def pathSearch(cur, grid, status):
     val = grid[cur[0]][cur[1]]
     steps = status[cur[0]][cur[1]] + 1
-
-    # print(val, steps)
-    # print(cur)
     if cur[0] != len(grid)-1:
         if grid[cur[0]+1][cur[1]] <= val+1:  # down
             if status[cur[0]+1][cur[1]] == -1 or status[cur[0]+1][cur[1]] > steps:
@@ -58,30 +54,12 @@ for line in file:
 status = [[-1 for i in range(len(grid[0]))] for j in range(len(grid))]
 status[start[0]][start[1]] = 0
 
-
-unvisted = []
-visted = []
-
-for i in range(len(grid)):
-    for j in range(len(grid[0])):
-        unvisted.append([i, j])
-
-status = pathSearch(start, grid, status)
-
-
 i = 0
-s = len(grid)*len(grid[0])
-print(s)
-
-for i in range(s):
+while status[end[0]][end[1]] < 0:
     for j in range(len(grid)):
         for k in range(len(grid[0])):
             if status[j][k] == i:
                 status = pathSearch([j, k], grid, status)
-
-
-print()
-for i in status:
-    print(i)
+    i += 1
 
 print('answer', status[end[0]][end[1]])
