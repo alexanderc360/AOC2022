@@ -1,6 +1,10 @@
 # file = open("inputs/input-2022-15.txt")
 import math
+import os
 import re
+
+os.system("aocd > inputs/input-2022-15.txt")
+
 
 file = open("test.txt")
 
