@@ -1,34 +1,34 @@
 import re
-
-# os.system("aocd > inputs/input-2022-14.txt")
+import time
 
 file = open("inputs/input-2022-14.txt")
 # file = open("test.txt")
 
 
-def show(rocks, sand):
+def show(blocked, rocks):
     min = rocks[0][0]
     max = rocks[0][0]
-    bottom = rocks[0][1]
 
-    for i in sand:
+    for i in rocks:
         if i[0] < min:
             min = i[0]
         elif i[0] > max:
             max = i[0]
 
+    bottom = rocks[0][1]
+    for i in rocks:
         if i[1] > bottom:
             bottom = i[1]
 
-    for j in range(bottom+1):
-        for i in range(min, max+1, 1):
-            if [i, j] in rocks:
+    for i in range(len(blocked)):
+        for j in range(min, max, 1):
+            if j in blocked[i] and [j, i] in rocks:
                 print('#', end='')
-            elif [i, j] in sand:
+            elif j in blocked[i] and [j, i] not in rocks:
                 print('O', end='')
             else:
                 print('.', end='')
-        print('\n')
+        print()
 
 
 def genRock(steps):
@@ -57,28 +57,15 @@ def genRock(steps):
     return rocks
 
 
-def sandFall(rocks, sand):
+def sandFall(block):
     x = 500  # starting point
     y = 0
     rest = False
-    bottom = rocks[0][1]
-    for i in rocks:
-        if i[1] > bottom:
-            bottom = i[1]
     while not rest:
-        if y > bottom:
-            print(bottom)
-            return -1
-        down = [x, y+1]
-        left = [x-1, y+1]
-        right = [x+1, y+1]
-        blockUnder = down in rocks or down in sand
-        blockLeft = left in rocks or left in sand
-        blockRight = right in rocks or right in sand
-
-        if blockUnder:
-            if blockLeft:
-                if blockRight:
+        under = block[y+1]
+        if x in under:
+            if x - 1 in under:
+                if x + 1 in under:
                     rest = True
                 else:
                     x += 1
@@ -88,6 +75,8 @@ def sandFall(rocks, sand):
                 y += 1
         else:
             y += 1
+        if y + 1 == len(block):
+            return -1
 
     return [x, y]
 
@@ -101,13 +90,41 @@ for line in file:
         rockPlaces.append(i)
 
 
-sandPlaces = []
+min = rockPlaces[0][0]
+max = rockPlaces[0][0]
+bottom = rockPlaces[0][1]
+for i in rockPlaces:
+    if i[0] < min:
+        min = i[0]
+    elif i[0] > max:
+        max = i[0]
+
+    if i[1] > bottom:
+        bottom = i[1]
 
 
+blocked = {i: set() for i in range(bottom + 1)}
+for i in rockPlaces:
+    blocked[i[1]].add(i[0])
+
+
+start = time.time()
 s = 0
 while s != -1:
-    s = sandFall(rockPlaces, sandPlaces)
-    if type(s) == list:
-        sandPlaces.append(s)
+    s = sandFall(blocked)
+    if s != -1:
+        blocked[s[1]].add(s[0])
 
-show(rockPlaces, sandPlaces)
+
+count = 0
+for i in range(len(blocked)):
+    for j in blocked[i]:
+        if [j, i] not in rockPlaces:
+            count += 1
+
+print(count)
+end = time.time()
+
+print('time: ', end-start, ' seconds')
+
+show(blocked, rockPlaces)
