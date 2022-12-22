@@ -1,11 +1,9 @@
-import math
 import os
 import re
 
 # os.system("aocd > inputs/input-2022-15.txt")
 
-# file = open("inputs/input-2022-15.txt")
-file = open("day 15/test.txt")
+file = open("inputs/input-2022-15.txt")
 
 
 class Sensor():
@@ -19,48 +17,26 @@ class Sensor():
         yDel = abs(self.y-self.closeBec[1])
         return xDel + yDel
 
-    def area(self):
-        a = set()
-        for i in range(self.dist()+1, 0, -1):
-            for j in range(i):
-                a.add((self.x+j, self.y-i))
-                print('*', end='')
-            print()
-        return a
-
 
 sens = set()
+beacons = set()
 for line in file:
-    # print(line)
-    # nums = re.split("[Sensor at :closestbeaconis=,xy]+", line.strip())
     nums = re.findall("\-?\d+", line)
-    # print(nums)
     bec = (int(nums[2]), int(nums[3]))
+    beacons.add(bec)
     sens.add(Sensor(int(nums[0]), int(nums[1]), bec))
 
-a = set()
-maxX = 0
-for i in sens:
-    if i.x > maxX:
-        maxX = i.x
-    # print(i.x, i.y)
-# print(maxX)
 
-y = 10
+y = 2000000
 
-# xDel = abs(self.x-self.closeBec[0])
-# yDel = abs(self.y-self.closeBec[1])
-
-
-count = 0
-for i in range(maxX):
-    for j in sens:
-        xDif = abs(i-j.x)
-        yDif = abs(y-j.y)
-
-        if (xDif+yDif) <= j.dist():
-            count += 1
+taken = set()
+for s in sens:
+    yDif = abs(y-s.y)
+    if yDif <= s.dist():
+        spots = abs(s.dist()-yDif)
+        for i in range(s.x-spots, s.x+spots+1, 1):
+            if (i, y) not in beacons:
+                taken.add(i)
 
 
-# need to account for spots that contain a beacon, then part 1 is done
-print(count)
+print(len(taken))
